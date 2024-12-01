@@ -3,30 +3,45 @@
 #include <cstdlib>
 #include <iostream>
 #include <iterator>
-#include <ranges>
+#include <range/v3/view/zip.hpp>
 #include <string>
 #include <string_view>
 #include <system_error>
+#include <utility>
 #include <vector>
 #include <range/v3/view.hpp>
 #include <range/v3/action/sort.hpp>
 
-namespace views = std::ranges::views;
+using ranges::views::zip;
 
-int main()
+std::pair<std::vector<int>, std::vector<int>> parse_lines();
+int solve_first_star(const auto zip_view);
+
+int main() {
+    const auto [first, second]{parse_lines()};
+    const auto zipped_view{zip(first, second)};
+
+    // star 1
+    const auto delta_sum{solve_first_star(zipped_view)};
+    std::cout << delta_sum << "\n";
+
+    // star 2
+
+    return 0;
+}
+
+std::pair<std::vector<int>, std::vector<int>> parse_lines()
 {
-    int i = 0;
     std::vector<int> first;
     std::vector<int> second;
-
     first.reserve(1000);
     second.reserve(1000);
-    for (std::string line; std::getline(std::cin, line); i++)
+    for (std::string line; std::getline(std::cin, line); )
     {
         const auto delim{line.find_first_of(' ')};
         if (delim == line.npos)
         {
-            return 1;
+            throw std::invalid_argument("invalid format");
         }
 
         const std::string_view first_str{
@@ -38,37 +53,37 @@ int main()
             std::cbegin(line) + delim + 3,
             std::cend(line)
         };
+
         int fint;
         int sint;
         const auto fres{std::from_chars(first_str.data(), first_str.data() + first_str.size(), fint)};
         if (fres.ec == std::errc::invalid_argument)
         {
-            return 1;
+            throw std::invalid_argument("invalid format");
         }
 
         const auto sres{std::from_chars(second_str.data(), second_str.data() + second_str.size(), sint)};
         if (sres.ec == std::errc::invalid_argument)
         {
-            return 1;
+            throw std::invalid_argument("invalid format");
         }
+
         first.emplace_back(fint);
         second.emplace_back(sint);
     }
+
     first |= ranges::actions::sort;
     second |= ranges::actions::sort;
-
-    const auto test{views::zip(
-            first,
-            second
-    )};
-    auto delta_sum{0};
-    for (const auto& [f, s] : test)
-    {
-        auto delta{std::abs(f - s)};
-        std::cout << delta << " " << f << " " << s << "\n";
-        delta_sum += delta;
-    }
-    std::cout << delta_sum << "\n";
-    return 0;
+    return std::make_pair(first, second);
 }
 
+int solve_first_star(const auto zip_view)
+{
+    auto delta_sum{0};
+    for (const auto& [f, s] : zip_view)
+    {
+        const auto delta{std::abs(f - s)};
+        delta_sum += delta;
+    }
+    return delta_sum;
+}

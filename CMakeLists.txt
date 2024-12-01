@@ -4,7 +4,6 @@ project(aoc_2024
         VERSION 0.0.1)
 
 include(FetchContent)
-
 FetchContent_Declare(
         range
         GIT_REPOSITORY "https://github.com/ericniebler/range-v3"
