@@ -4,18 +4,19 @@
 #include <cstdlib>
 #include <iostream>
 #include <iterator>
-#include <range/v3/view/zip.hpp>
 #include <string>
 #include <string_view>
 #include <system_error>
 #include <utility>
 #include <vector>
-#include <range/v3/view.hpp>
+
 #include <range/v3/action/sort.hpp>
+#include <range/v3/view.hpp>
+#include <range/v3/view/zip.hpp>
 
 using ranges::views::zip;
 
-std::pair<std::vector<int>, std::vector<int>> parse_lines();
+std::pair<const std::vector<int>, const std::vector<int>> parse_lines();
 int solve_first_star(const auto zip_view);
 int solve_second_star(const std::vector<int>& first, const std::vector<int>& second);
 
@@ -34,7 +35,7 @@ int main() {
     return 0;
 }
 
-std::pair<std::vector<int>, std::vector<int>> parse_lines()
+std::pair<const std::vector<int>, const std::vector<int>> parse_lines()
 {
     std::vector<int> first;
     std::vector<int> second;
@@ -58,22 +59,19 @@ std::pair<std::vector<int>, std::vector<int>> parse_lines()
             std::cend(line)
         };
 
-        int fint;
-        int sint;
-        const auto fres{std::from_chars(first_str.data(), first_str.data() + first_str.size(), fint)};
-        if (fres.ec == std::errc::invalid_argument)
+        auto to_int = [](const std::string_view str)
         {
-            throw std::invalid_argument("invalid format");
-        }
+            int num;
+            const auto num_res{std::from_chars(str.data(), str.data() + str.size(), num)};
+            if (num_res.ec == std::errc::invalid_argument)
+            {
+                throw std::invalid_argument("invalid format");
+            }
+            return num;
+        };
 
-        const auto sres{std::from_chars(second_str.data(), second_str.data() + second_str.size(), sint)};
-        if (sres.ec == std::errc::invalid_argument)
-        {
-            throw std::invalid_argument("invalid format");
-        }
-
-        first.emplace_back(fint);
-        second.emplace_back(sint);
+        first.emplace_back(to_int(first_str));
+        second.emplace_back(to_int(second_str));
     }
 
     first |= ranges::actions::sort;
