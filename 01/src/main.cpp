@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <charconv>
 #include <cmath>
 #include <cstdlib>
@@ -16,6 +17,7 @@ using ranges::views::zip;
 
 std::pair<std::vector<int>, std::vector<int>> parse_lines();
 int solve_first_star(const auto zip_view);
+int solve_second_star(const std::vector<int>& first, const std::vector<int>& second);
 
 int main() {
     const auto [first, second]{parse_lines()};
@@ -26,6 +28,8 @@ int main() {
     std::cout << delta_sum << "\n";
 
     // star 2
+    const auto similarity{solve_second_star(first, second)};
+    std::cout << similarity << "\n";
 
     return 0;
 }
@@ -86,4 +90,22 @@ int solve_first_star(const auto zip_view)
         delta_sum += delta;
     }
     return delta_sum;
+}
+
+int solve_second_star(const std::vector<int>& first, const std::vector<int>& second)
+{
+    int all_similarity{0};
+    for (const auto key : first)
+    {
+        int occurrences{0};
+        std::for_each(
+                std::cbegin(second),
+                std::cend(second),
+                [key, &occurrences](const auto val){
+                    if (val == key) ++occurrences;
+                }
+        );
+        all_similarity += key * occurrences;
+    }
+    return all_similarity;
 }
