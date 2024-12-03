@@ -14,3 +14,4 @@ FetchContent_MakeAvailable(range)
 
 add_subdirectory(lib)
 add_subdirectory(01)
+add_subdirectory(02)
