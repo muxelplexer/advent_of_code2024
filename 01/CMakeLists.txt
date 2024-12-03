@@ -8,6 +8,7 @@ target_include_directories(aoc_day1 PRIVATE
 
 target_link_libraries(aoc_day1 PRIVATE
     range-v3
+    aoc_lib
 )
 
 find_program(CLANG_TIDY_EXE NAMES "clang-tidy")

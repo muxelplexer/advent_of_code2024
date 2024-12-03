@@ -1,3 +1,4 @@
+#include "conversion.hpp"
 #include <algorithm>
 #include <charconv>
 #include <cmath>
@@ -59,19 +60,8 @@ std::pair<const std::vector<int>, const std::vector<int>> parse_lines()
             std::cend(line)
         };
 
-        auto to_int = [](const std::string_view str)
-        {
-            int num;
-            const auto num_res{std::from_chars(str.data(), str.data() + str.size(), num)};
-            if (num_res.ec == std::errc::invalid_argument)
-            {
-                throw std::invalid_argument("invalid format");
-            }
-            return num;
-        };
-
-        first.emplace_back(to_int(first_str));
-        second.emplace_back(to_int(second_str));
+        first.emplace_back(lib::to_int(first_str));
+        second.emplace_back(lib::to_int(second_str));
     }
 
     first |= ranges::actions::sort;
