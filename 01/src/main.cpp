@@ -18,7 +18,7 @@ using ranges::views::zip;
 
 std::pair<const std::vector<int>, const std::vector<int>> parse_lines();
 int solve_first_star(const auto zip_view);
-int solve_second_star(const std::vector<int>& first, const std::vector<int>& second);
+int solve_second_star(const std::span<const int> first, const std::span<const int> second);
 
 int main() {
     const auto [first, second]{parse_lines()};
@@ -76,6 +76,7 @@ std::pair<const std::vector<int>, const std::vector<int>> parse_lines()
 
     first |= ranges::actions::sort;
     second |= ranges::actions::sort;
+
     return std::make_pair(first, second);
 }
 
@@ -90,7 +91,7 @@ int solve_first_star(const auto zip_view)
     return delta_sum;
 }
 
-int solve_second_star(const std::vector<int>& first, const std::vector<int>& second)
+int solve_second_star(const std::span<const int> first, const std::span<const int> second)
 {
     int all_similarity{0};
     for (const auto key : first)
